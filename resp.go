@@ -259,7 +259,7 @@ func del(args []Value) Value{
 	
 	_,ok := SETs[key]
 	if !ok {
-		return Value{typ: "error",str: "KEY not found"}
+		return Value{typ: "string",str: "OK"}
 	}
 
 	SETsMu.Lock()

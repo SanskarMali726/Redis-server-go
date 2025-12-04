@@ -37,6 +37,18 @@ func main() {
 
 	defer conn.Close()
 
+	aof.Read(func(value Value) {
+			command := strings.ToUpper(value.array[0].bulk)
+			args := value.array[1:]
+
+			handler, ok := Handlers[command]
+			if !ok {
+				fmt.Println("Invalid command: ", command)
+				return
+			}
+			handler(args)
+	})
+
 	for {
 		resp := NewResp(conn)
 		value,err := resp.Read()
@@ -55,18 +67,6 @@ func main() {
 			continue
 		}
 
-
-		aof.Read(func(value Value) {
-			command := strings.ToUpper(value.array[0].bulk)
-			args := value.array[1:]
-
-			handler, ok := Handlers[command]
-			if !ok {
-				fmt.Println("Invalid command: ", command)
-				return
-			}
-			handler(args)
-		})
 	
 		command := strings.ToUpper(value.array[0].bulk)
 		args := value.array[1:]
